@@ -26,8 +26,21 @@ var regionCmd = &cobra.Command{
 	},
 }
 
+var singleCmd = &cobra.Command{
+	Use:   "single",
+	Short: "process all single items",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := techan.NewSingle(filepath).Run()
+		if err != nil {
+			panic(err)
+		}
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(teChanCmd)
 
 	teChanCmd.AddCommand(regionCmd)
+	teChanCmd.AddCommand(singleCmd)
 }
