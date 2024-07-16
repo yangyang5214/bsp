@@ -17,9 +17,20 @@ def parser_excel():
         if is_title(v):
             title = v
             continue
+        v = format_content(v)
         results.append([title, v])
 
     return pd.DataFrame(results, columns=['title', 'text'])
+
+
+# 优化子标题
+def format_content(v: str):
+    if len(v) < 8:
+        return v
+    pre = v[:7]
+    pre = pre.replace(' ', '')
+    pre = pre.replace('，', '.')
+    return pre + v[7:]
 
 
 def is_title(v: str) -> bool:
