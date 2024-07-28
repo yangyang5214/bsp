@@ -90,17 +90,43 @@ def process_single(file_name: str) -> list:
     return full_text
 
 
+def split_keyword(content: str) -> List:
+    r = []
+    arrs = content.replace('，', ' ').split(" ")
+    for item in arrs:
+        if item == '':
+            continue
+
+        r.append(item)
+    return r
+
+
 def main():
-    result = []
+    keys1 = []
+    keys2 = []
     for name in find_all_file("/Users/beer/Downloads/hdd", "docx"):
         rs = process_single(name)
         for r in rs:
             c = Customer(r)
-            result.append(['/'.join(name.split("/")[-2:])] + c.parser())
+            c.parser()
+            # result.append(['/'.join(name.split("/")[-2:])] + c.parser())
+            keys1 = keys1 + split_keyword(c.desc)
+            keys2 = keys2 + split_keyword(c.guide)
 
-    df = pd.DataFrame(result, columns=['文件名', '客户', '年龄', '最后看病日期', '症状', '药单', '原始文本'])
-    with pd.ExcelWriter('/tmp/customer_result.xlsx', engine='openpyxl') as writer:
+    # df = pd.DataFrame(result, columns=['文件名', '客户', '年龄', '最后看病日期', '症状', '药单', '原始文本'])
+    df = pd.DataFrame([
+        keys1,
+    ]).melt()
+    with pd.ExcelWriter('/tmp/keyword_1.xlsx', engine='openpyxl') as writer:
         df.to_excel(writer, index=False)
+
+    df = pd.DataFrame([
+        keys2,
+    ]).melt()
+    with pd.ExcelWriter('/tmp/keyword_2.xlsx', engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+
+
 
 
 if __name__ == '__main__':
